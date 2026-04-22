@@ -1,11 +1,28 @@
 import './styles/theme.css';
 import './styles/global.css';
+import { Container } from './components/Container';
+import { Logo } from './components/Logo';
+import { Menu } from './components/Menu';
+import { CountDown } from './components/CountDown';
+
 function App() {
   return (
     <>
-      <h1>Pomodoro</h1>
+      <div className='container-fluid'>
+        <Container>
+          <Logo />
+        </Container>
+
+        <Container>
+          <Menu />
+        </Container>
+
+        <Container>
+          <CountDown />
+        </Container>
+      </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
