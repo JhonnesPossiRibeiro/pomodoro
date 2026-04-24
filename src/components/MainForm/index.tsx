@@ -3,9 +3,16 @@ import { Cycles } from '../Cycles';
 import { DefaultButton } from '../DefaultButton';
 import { DefaultInput } from '../DefaultInput';
 
+
 export function MainForm() {
+
+  function handleCreateNewTask(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+  }
+
+
   return (
-    <form className='form' action=''>
+    <form onSubmit={handleCreateNewTask} className='form' action=''>
       <div className='formRow'>
         <DefaultInput
           id='meuInput'
@@ -15,7 +22,7 @@ export function MainForm() {
         />
       </div>
       <div className='formRow'>
-        <p>Lorem, ipsum dolor sit amet.</p>
+        <p>Próximo intervalo é de 25 min</p>
       </div>
       <div className='formRow'>
         <Cycles />
