@@ -1,4 +1,4 @@
-import { PlayCircleIcon } from 'lucide-react';
+import { PlayCircleIcon, StopCircleIcon } from 'lucide-react';
 import { Cycles } from '../Cycles';
 import { DefaultButton } from '../DefaultButton';
 import { DefaultInput } from '../DefaultInput';
@@ -9,11 +9,9 @@ import { getNextCycle } from '../../utils/getNextCycle';
 import { getNextCycleType } from '../../utils/getNextCycleType';
 import { formatSecondsToMinutes } from '../../utils/formatSecondsToMinutes';
 
-
 export function MainForm() {
-  const {state,setState} = useTaskContext();
+  const { state, setState } = useTaskContext();
   const tsakNameInput = useRef<HTMLInputElement>(null);
-
 
   const nextCycle = getNextCycle(state.currentCycle);
   const nextCycleType = getNextCycleType(nextCycle);
@@ -21,11 +19,11 @@ export function MainForm() {
   function handleCreateNewTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if(tsakNameInput.current === null) return;
+    if (tsakNameInput.current === null) return;
 
     const taskName = tsakNameInput.current.value.trim();
 
-    if(!taskName){
+    if (!taskName) {
       alert('Digite o nome da tarefa');
       return;
     }
@@ -37,26 +35,23 @@ export function MainForm() {
       completeDate: null,
       interrupDate: null,
       duration: state.config[nextCycleType],
-      type: nextCycleType
+      type: nextCycleType,
     };
 
-    const secondsRemaining = newTask.duration * 60
+    const secondsRemaining = newTask.duration * 60;
 
     setState(prevState => {
-      return{
+      return {
         ...prevState,
-        config:{...prevState.config},
+        config: { ...prevState.config },
         activeTask: newTask,
         currentCycle: nextCycle,
         secondsRemaining,
         formattedSecondsRemainning: formatSecondsToMinutes(secondsRemaining),
-        task: [...prevState.tasks,newTask],
-      }
-    })
-
-
+        task: [...prevState.tasks, newTask],
+      };
+    });
   }
-
 
   return (
     <form onSubmit={handleCreateNewTask} className='form' action=''>
@@ -67,16 +62,35 @@ export function MainForm() {
           type='text'
           placeholder='Digite algo'
           ref={tsakNameInput}
+          disabled={!!state.activeTask}
         />
       </div>
       <div className='formRow'>
         <p>Próximo intervalo é de 25 min</p>
       </div>
+      {state.currentCycle > 0 && (
+        <div className='formRow'>
+          <Cycles />
+        </div>
+      )}
       <div className='formRow'>
-        <Cycles />
-      </div>
-      <div className='formRow'>
-        <DefaultButton icon={<PlayCircleIcon />} />
+        {!state.activeTask ? (
+          <DefaultButton
+            aria-label='Iniciar nova tarefa'
+            title='Iniciar nova tarefa'
+            type='submit'
+            icon={<PlayCircleIcon />}
+          />
+        ):
+        (
+          <DefaultButton
+            aria-label='Interromper tarefa atual'
+            title='Interromper tarefa atual'
+            type='button'
+            color='red'
+            icon={<StopCircleIcon />}
+          />
+        )}
       </div>
     </form>
   );
