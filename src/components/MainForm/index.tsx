@@ -60,6 +60,12 @@ export function MainForm() {
         activeTask: null,
         secondsRemaining: 0,
         formattedSecondsRemainning: '00:00',
+        task: prevState.tasks.map(task => {
+          if (prevState.activeTask && prevState.activeTask.id === task.id) {
+            return { ...task, interrupDate: Date.now() };
+          }
+          return task;
+        }),
       };
     });
   }
@@ -91,7 +97,7 @@ export function MainForm() {
             title='Iniciar nova tarefa'
             type='submit'
             icon={<PlayCircleIcon />}
-            key="botao_submit"
+            key='botao_submit'
           />
         )}
 
@@ -103,7 +109,7 @@ export function MainForm() {
             color='red'
             icon={<StopCircleIcon />}
             onClick={handleInterruptTask}
-            key="botao_interromper"
+            key='botao_interromper'
           />
         )}
       </div>
