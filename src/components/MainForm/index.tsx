@@ -39,11 +39,12 @@ export function MainForm() {
       type: nextCycleType,
     };
 
-    dispatch({type: TaskActionTypes.START_TASK, payload: newTask});
+    dispatch({ type: TaskActionTypes.START_TASK, payload: newTask });
+    
   }
 
   function handleInterruptTask() {
-    dispatch({type: TaskActionTypes.INTERRUPT_TASK});
+    dispatch({ type: TaskActionTypes.INTERRUPT_TASK });
   }
 
   return (
@@ -59,7 +60,7 @@ export function MainForm() {
         />
       </div>
       <div className='formRow'>
-        <Tips/>
+        <Tips />
       </div>
       {state.currentCycle > 0 && (
         <div className='formRow'>
