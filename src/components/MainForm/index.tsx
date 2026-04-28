@@ -8,6 +8,7 @@ import { useTaskContext } from '../../contexts/TaskContext/useTaskContext';
 import { getNextCycle } from '../../utils/getNextCycle';
 import { getNextCycleType } from '../../utils/getNextCycleType';
 import { TaskActionTypes } from '../../contexts/TaskContext/taskActions';
+import { Tips } from '../Tips';
 
 export function MainForm() {
   const { state, dispatch } = useTaskContext();
@@ -15,18 +16,6 @@ export function MainForm() {
 
   const nextCycle = getNextCycle(state.currentCycle);
   const nextCycleType = getNextCycleType(nextCycle);
-
-  const tipsForWhenActiveTask = {
-    workTime: <span>Foque por <b>{state.config.workTime}min</b></span>,
-    shortBreakTime: <span>Descanse por <b>{state.config.shortBreakTime}min</b></span>,
-    longBreakTime: <span>Descanso longo</span>,
-  }
-
-   const tipsForNoActiveTask = {
-    workTime: <span>Próximo ciclo é de <b>{state.config.workTime}min</b></span>,
-    shortBreakTime: <span>Próximo ciclo é de <b>{state.config.shortBreakTime}min</b></span>,
-    longBreakTime: <span>Próximo descanso será longo</span>,
-  }
 
   function handleCreateNewTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,8 +59,7 @@ export function MainForm() {
         />
       </div>
       <div className='formRow'>
-        {!!state.activeTask && tipsForWhenActiveTask[state.activeTask.type]}
-        {!state.activeTask && tipsForNoActiveTask[nextCycleType]}
+        <Tips/>
       </div>
       {state.currentCycle > 0 && (
         <div className='formRow'>
