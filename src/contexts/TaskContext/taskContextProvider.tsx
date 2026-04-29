@@ -5,13 +5,27 @@ import { taskReducer } from './taskReducer';
 import { TimerWorkerManager } from '../../workers/TimerWorkerManager';
 import { TaskActionTypes } from './taskActions';
 import { loadBeep } from '../../utils/loadBeep';
+import type { TaskStateModel } from '../../models/TaskStateModel';
 
 type TaskContextProviderProps = {
   children: React.ReactNode;
 };
 
 export function TaskContextProvider({ children }: TaskContextProviderProps) {
-  const [state, dispatch] = useReducer(taskReducer, initialTaskState);
+  const [state, dispatch] = useReducer(taskReducer, initialTaskState, () => {
+    const storageState = localStorage.getItem('state');
+
+    if (storageState === null) return initialTaskState;
+
+    const parsedStorageState = JSON.parse(storageState) as TaskStateModel;
+
+    return {
+      ...parsedStorageState,
+      activeTask: null,
+      secondsRemaining: 0,
+      formattedSecondsRemainning: '00:00',
+    };
+  });
   const playBeepRef = useRef<() => void | null>(null);
 
   const worker = TimerWorkerManager.getInstance();
@@ -37,11 +51,13 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
   });
 
   useEffect(() => {
+    localStorage.setItem('state', JSON.stringify(state));
+
     if (!state.activeTask) {
       worker.terminate();
     }
 
-    document.title = `${state.formattedSecondsRemainning} - Chronos`
+    document.title = `${state.formattedSecondsRemainning} - Chronos`;
 
     worker.postMessage(state);
   }, [worker, state]);
@@ -49,8 +65,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
   useEffect(() => {
     if (state.activeTask && playBeepRef.current === null) {
       playBeepRef.current = loadBeep();
-    }
-    else{
+    } else {
       playBeepRef.current = null;
     }
   }, [state.activeTask]);
