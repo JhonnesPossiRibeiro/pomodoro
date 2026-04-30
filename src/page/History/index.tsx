@@ -28,6 +28,7 @@ export function History() {
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSortTaskOptions(prevState => ({
       ...prevState,
       tasks: sortTasks({
@@ -40,6 +41,7 @@ export function History() {
 
   useEffect(() => {
     if (!confirmClearHistory) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setConfirmClearHistory(false);
 
     dispatch({ type: TaskActionTypes.RESET_STATE });
