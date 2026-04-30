@@ -4,8 +4,51 @@ import { DefaultButton } from '../../components/DefaultButton';
 import { DefaultInput } from '../../components/DefaultInput';
 import { Heading } from '../../components/Heading';
 import { MainTemplate } from '../../templates/MainTemplate';
+import { useRef } from 'react';
+import { useTaskContext } from '../../contexts/TaskContext/useTaskContext';
+import { showMessage } from '../../adapters/showMessage';
+import { TaskActionTypes } from '../../contexts/TaskContext/taskActions';
 
 export function Settings() {
+  const { state, dispatch } = useTaskContext();
+  const workTimeInputRef = useRef<HTMLInputElement>(null);
+  const shortBreakTimeInputRef = useRef<HTMLInputElement>(null);
+  const longBreakTimeInputRef = useRef<HTMLInputElement>(null);
+
+  function handleSaveSettings(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    showMessage.dissmiss();
+    const workTime = Number(workTimeInputRef.current?.value);
+    const shortBreakTime = Number(shortBreakTimeInputRef.current?.value);
+    const longBreakTime = Number(longBreakTimeInputRef.current?.value);
+
+    if (isNaN(workTime) || isNaN(shortBreakTime) || isNaN(longBreakTime)) {
+      showMessage.error('Digite apenas números para todos os campos');
+      return;
+    }
+
+    if (workTime < 1 || workTime > 99) {
+      showMessage.error('Digite um valor entre 1 e 99 para foco');
+      return;
+    }
+
+    if (shortBreakTime < 1 || shortBreakTime > 30) {
+      showMessage.error('Digite um valor entre 1 e 30 para descanso curto');
+      return;
+    }
+
+    if (longBreakTime < 1 || longBreakTime > 60) {
+      showMessage.error('Digite um valor entre 1 e 60 para descanso longo');
+      return;
+    }
+
+    dispatch({
+      type: TaskActionTypes.CHANGE_SETTINGS,
+      payload: { workTime, shortBreakTime, longBreakTime },
+    });
+    showMessage.success('Configurações Salvas')
+  }
+
   return (
     <>
       <MainTemplate>
@@ -21,15 +64,33 @@ export function Settings() {
         </Container>
 
         <Container>
-          <form action='' className='form'>
+          <form onSubmit={handleSaveSettings} action='' className='form'>
             <div className='formRow'>
-              <DefaultInput id='workTime' labelText='Foco' />
+              <DefaultInput
+                id='workTime'
+                labelText='Foco'
+                ref={workTimeInputRef}
+                defaultValue={state.config.workTime}
+                type='number'
+              />
             </div>
             <div className='formRow'>
-              <DefaultInput id='shortBreakTime' labelText='Descanso curto' />
+              <DefaultInput
+                id='shortBreakTime'
+                labelText='Descanso curto'
+                ref={shortBreakTimeInputRef}
+                defaultValue={state.config.shortBreakTime}
+                type='number'
+              />
             </div>
             <div className='formRow'>
-              <DefaultInput id='longBreakTime' labelText='Descanso longo' />
+              <DefaultInput
+                id='longBreakTime'
+                labelText='Descanso longo'
+                ref={longBreakTimeInputRef}
+                defaultValue={state.config.longBreakTime}
+                type='number'
+              />
             </div>
             <div className='formRow'>
               <DefaultButton
